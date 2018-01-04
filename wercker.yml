@@ -2,8 +2,8 @@ box: maven:latest
 build:
   steps:
     - xenoterracide/maven:
-        goals: package
+        goals: package spring-boot:repackage
     - script:
         name: copy package to output
         code: |
-          cp ./target/*.jar $WERCKER_OUTPUT_DIR
+          cp ./target/*.jar $WERCKER_OUTPUT_DIR/cloud-ci-vergleich.jar

@@ -7,3 +7,20 @@ build:
         name: copy package to output
         code: |
           cp ./target/*.jar $WERCKER_OUTPUT_DIR/cloud-ci-vergleich.jar
+deploy:
+  box:
+    id: openjdk
+    tag: 8-jre-alpine
+    cmd: /bin/sh
+  steps:
+    - script:
+      code: |
+        touch /app.jar
+    - internal/docker-push:
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        tag: latest
+        repository: $DOCKER_REPOSITORY
+        ports: "8080"
+        volumes: "/tmp"
+        entrypoint: java -Djava.security.egd=file:/dev/./urandom -jar /app.jar

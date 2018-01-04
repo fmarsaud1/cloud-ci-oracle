@@ -1,0 +1,9 @@
+box: maven:latest
+build:
+  steps:
+    - xenoterracide/maven:
+        goals: package
+    - script:
+        name: copy package to output
+        code: |
+          cp ./target/*.jar $WERCKER_OUTPUT_DIR

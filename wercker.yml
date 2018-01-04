@@ -15,6 +15,7 @@ deploy:
   steps:
     - script:
       code: |
+        mv $WERCKER_SOURCE_DIR/cloud-ci-vergleich.jar .
         touch /cloud-ci-vergleich.jar
     - internal/docker-push:
         username: $DOCKER_USERNAME

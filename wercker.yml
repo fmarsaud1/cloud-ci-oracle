@@ -21,7 +21,6 @@ deploy:
         password: $DOCKER_PASSWORD
         tag: latest
         repository: $DOCKER_REPOSITORY
-        registry: https://registry.hub.docker.com
         ports: "8080"
         volumes: "/tmp"
         entrypoint: java -Djava.security.egd=file:/dev/./urandom -jar /cloud-ci-vergleich.jar

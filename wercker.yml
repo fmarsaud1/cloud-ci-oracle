@@ -25,3 +25,9 @@ deploy:
         ports: "8080"
         volumes: "/tmp"
         entrypoint: java -Djava.security.egd=file:/dev/./urandom -jar /cloud-ci-vergleich.jar
+update-deplyoment:
+  steps:
+    - script:
+      name: Update OCCS deployment
+      code: |
+        curl -sk -X "POST" -H "Authorization: Bearer ${OCCS_API_KEY}" "${OCCS_BASE_URL}/api/v2/deployments/${OCCS_DEPLOYMENT_ID}/webhook/restart"

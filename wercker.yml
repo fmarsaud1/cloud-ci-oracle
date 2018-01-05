@@ -33,4 +33,5 @@ update-deplyoment:
     - script:
       name: Update OCCS deployment
       code: |
-        curl -sk -X "POST" -H "Authorization: Bearer ${OCCS_API_KEY}" "${OCCS_BASE_URL}/api/v2/deployments/${OCCS_DEPLOYMENT_ID}/webhook/restart"
+        export RESET_URL="$(curl -sk -X "PUT" -H "Authorization: Bearer ${OCCS_API_KEY}" "${OCCS_BASE_URL}/api/v2/deployments/${OCCS_DEPLOYMENT_ID}/webhook/restart" -d '{"enabled":true}' | grep full_url_path | cut -d'"' -f4)"
+        curl -sk -X "POST" "${OCCS_BASE_URL}${RESET_URL}"

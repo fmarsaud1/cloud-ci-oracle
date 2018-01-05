@@ -25,6 +25,9 @@ deploy:
         ports: "8080"
         volumes: "/tmp"
         entrypoint: java -Djava.security.egd=file:/dev/./urandom -jar /cloud-ci-vergleich.jar
+    - script:
+      code: |
+        touch  $WERCKER_OUTPUT_DIR/deploy-me
 update-deplyoment:
   steps:
     - script:

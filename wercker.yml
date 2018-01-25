@@ -37,3 +37,40 @@ deploy:
     - script:
       code: |
         touch  $WERCKER_OUTPUT_DIR/deploy-me
+update-deplyoment:
+  steps:
+    - script:
+      name: Update OCCS deployment
+      code: |
+        # (10) Defining the Deployment Config
+        DEPLOYMENT_CONFIG='{
+          "deployment_id":"'"$OCCS_DEPLOYMENT_ID"'",
+           "deployment_name":"'"$OCCS_DEPLOYMENT_ID"'",
+           "desired_state":1,
+           "placement":{"pool_id":"default"},
+           "quantities":{"DevOpsDemo":1},
+           "stack": {
+             "service_id": "DevOpsDemo",
+             "service_name": "DevOpsDemo",
+             "subtype": "service",
+             "content": "version: 2\nservices:\n  DevOpsDemo:\n    image: marcobuss/cloud-ci-oracle\n    environment:\n      - \"occs:availability=per-pool\"\n      - \"occs:scheduler=random\"\n      - \"occs:description=Demo Project to show Wercker integration\"\n    ports:\n      - \"8080:8080/tcp\"\n"
+           }
+        }'
+
+        # (11) Check if the deployment allready exists
+        STATUS=$(curl -sk -o /dev/null -w '%{http_code}' -X "GET" -H "Authorization: Bearer ${OCCS_API_KEY}" "${OCCS_BASE_URL}/api/v2/deployments/${OCCS_DEPLOYMENT_ID}")
+        echo "Queried Deployment and get response ${STATUS}"
+        if [ $STATUS -eq 200 ]; then
+          # (11) if the deployment allready exists, we can initialize the restart of the deployment
+          echo "Reload Container Deployment"
+          RESET_URL="$(curl -sk -X "PUT" -H "Authorization: Bearer ${OCCS_API_KEY}" "${OCCS_BASE_URL}/api/v2/deployments/${OCCS_DEPLOYMENT_ID}/webhook/restart" -d '{"enabled":true}' | grep full_url_path | cut -d'"' -f4)"
+          echo "Reset URL: ${OCCS_BASE_URL}${RESET_URL}"
+          curl -sk -X "POST" "${OCCS_BASE_URL}${RESET_URL}"
+          break
+        else
+          # (12) creating the deployment from scratch
+          echo "Try to create new deployment"
+          curl -sk -X "POST" -H "Authorization: Bearer ${OCCS_API_KEY}" "${OCCS_BASE_URL}/api/v2/deployments/" -d "${DEPLOYMENT_CONFIG}"
+        fi
+
+

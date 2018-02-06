@@ -47,7 +47,7 @@ update-deplyoment:
           "deployment_id":"'"$OCCS_DEPLOYMENT_ID"'",
            "deployment_name":"'"$OCCS_DEPLOYMENT_ID"'",
            "desired_state":1,
-           "placement":{"pool_id":"development"},
+           "placement":{"pool_id":"default"},
            "quantities":{"DevOpsDemo":1},
            "stack": {
              "service_id": "DevOpsDemo",

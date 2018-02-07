@@ -1,2 +1,2 @@
 # cloud-ci-oracle
-test
+commit 
